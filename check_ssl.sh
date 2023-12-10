@@ -3,8 +3,10 @@
 # @HoangDH - Jun 29 2019
 # set -ex
 
+SLACK_WEBHOOK_URL="${{ secrets.SLACK_WEBHOOK_URL }}"
+
 notify() {
-  WEBHOOK="https://hooks.slack.com/services/XXXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXXX"
+  WEBHOOK="$SLACK_WEBHOOK_URL"
   SLACK_CHANNEL="#ssl-monitor"
   SLACK_BOTNAME="SSL Checker"
   
