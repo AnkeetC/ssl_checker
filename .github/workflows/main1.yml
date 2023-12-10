@@ -27,4 +27,5 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       run: |
+        chmod +x check_ssl.sh
         ./check_ssl.sh "google.com" "youtube.com" "github.com"
