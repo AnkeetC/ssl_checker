@@ -18,6 +18,7 @@ def check_ssl_expiry(domain):
             print(f"Error: SSL certificate information not found for {domain}.")
             print("OpenSSL command output:")
             print(result.stderr)
+            print(result.stdout)  # Print entire certificate information for debugging
             return None
 
         not_after_str = not_after_lines[0].split('=')[1].strip()
@@ -42,7 +43,7 @@ def send_slack_alert(domain, remaining_days):
         requests.post(slack_webhook_url, data=json.dumps(message), headers={'Content-Type': 'application/json'})
 
 def main():
-    domains = ['example1.com', 'github.com']  # Use your domains here
+    domains = ['google.com', 'github.com']  
     for domain in domains:
         remaining_days = check_ssl_expiry(domain)
         if remaining_days is not None:
