@@ -2,6 +2,7 @@ import subprocess
 import requests
 import json
 from datetime import datetime, timedelta
+import os
 
 def check_ssl_expiry(domain):
     try:
@@ -11,15 +12,23 @@ def check_ssl_expiry(domain):
         )
 
         cert_info = result.stdout.split('\n')
-        not_after_line = [line for line in cert_info if 'notAfter' in line][0]
-        not_after_str = not_after_line.split('=')[1].strip()
+        not_after_lines = [line for line in cert_info if 'notAfter' in line]
+
+        if not not_after_lines:
+            raise ValueError("SSL certificate information not found.")
+
+        not_after_str = not_after_lines[0].split('=')[1].strip()
 
         expiry_date = datetime.strptime(not_after_str, '%b %d %H:%M:%S %Y %Z')
         remaining_days = (expiry_date - datetime.utcnow()).days
 
         return remaining_days
 
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
+        print(f"Error running OpenSSL command: {e}")
+        return None
+    except ValueError as e:
+        print(f"Error: {e}")
         return None
 
 def send_slack_alert(domain, remaining_days):
@@ -33,7 +42,7 @@ def send_slack_alert(domain, remaining_days):
         requests.post(slack_webhook_url, data=json.dumps(message), headers={'Content-Type': 'application/json'})
 
 def main():
-    domains = ['google.com', 'github.com'] 
+    domains = ['google.com', 'github.com']  # Add your domains here or load them dynamically
     for domain in domains:
         remaining_days = check_ssl_expiry(domain)
         if remaining_days is not None:
