@@ -42,7 +42,7 @@ def send_slack_alert(domain, remaining_days):
         requests.post(slack_webhook_url, data=json.dumps(message), headers={'Content-Type': 'application/json'})
 
 def main():
-    domains = ['google.com', 'github.com']  # Use your domains here
+    domains = ['example1.com', 'github.com']  # Use your domains here
     for domain in domains:
         remaining_days = check_ssl_expiry(domain)
         if remaining_days is not None:
